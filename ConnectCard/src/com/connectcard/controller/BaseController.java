@@ -62,7 +62,8 @@ public class BaseController {
      * @param className the qualified name of the domain object
      * @return the populated domain object 
      */
-    protected Object convertToDomainObj(HttpServletRequest request, String className){
+    @SuppressWarnings("rawtypes")
+	protected Object convertToDomainObj(HttpServletRequest request, String className){
         Map<String, Method> methodMap = new HashMap<String, Method>();
         Object obj;
         
@@ -87,7 +88,13 @@ public class BaseController {
             if(methodMap.containsKey("set" + name.toLowerCase())){
                 try {
                     Method method = methodMap.get(name);
-                    method.invoke(obj, request.getParameter(name));
+                   Class[] paramTypes = method.getParameterTypes();
+                   if(paramTypes == null || paramTypes.length == 0){
+                	   return null;
+                   } else {
+                	   Class type = paramTypes[0];
+                	   method.invoke(obj, type.cast(request.getParameter(name)));
+                   }
                 } catch (IllegalAccessException ex) {
                     Logger.getLogger(BaseController.class.getName()).log(Level.SEVERE, null, ex);
                 } catch (IllegalArgumentException ex) {
