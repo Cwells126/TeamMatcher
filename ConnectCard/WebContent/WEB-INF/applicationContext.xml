@@ -16,7 +16,7 @@
                              http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.1.xsd">
        
     <context:annotation-config />
-    <context:component-scan base-package="com.connectcard.dao.impl, com.connectcard.service" />
+    <context:component-scan base-package="com.connectcard.dao.impl, com.connectcard.service , com.connectcard.serviceImpl" />
   
     <bean id="propertyConfigurer"
           class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer"

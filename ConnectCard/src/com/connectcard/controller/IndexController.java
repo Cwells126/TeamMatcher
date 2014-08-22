@@ -1,21 +1,32 @@
 package com.connectcard.controller;
 
 import com.connectcard.domain.City;
+import com.connectcard.domain.Matchup;
 import com.connectcard.domain.User;
 import com.connectcard.service.LoginUser;
 import com.connectcard.service.RetrieveCitiesAndStates;
+import com.connectcard.service.RetrieveLines;
+import com.connectcard.utility.ServerProxy;
 import com.jigy.api.Helpful;
+
+import java.io.BufferedReader;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.view.json.MappingJacksonJsonView;
+
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
 
 /**
@@ -27,6 +38,9 @@ import org.springframework.web.servlet.view.json.MappingJacksonJsonView;
  */
 @Controller
 public class IndexController extends BaseController {
+	
+
+	
     public static final String REDIRECT_URL = "redirectUrl";
     public static final String WEB_PROPERTIES = "web.properties";
     public static final String VALIDATED_PATH_LIST = "validatedPathList";
@@ -41,6 +55,70 @@ public class IndexController extends BaseController {
     
     @Resource
     private RetrieveCitiesAndStates retrieveCitiesAndStates;
+    
+    @Resource
+    private RetrieveLines retrieveLines;
+    
+    
+    @Autowired
+    public void setRetrieveLines(RetrieveLines retrieveLines) {
+        this.retrieveLines = retrieveLines;
+    } 
+    
+    
+    @RequestMapping(value = "/videos.htm")
+    public String displayVideos(HttpServletRequest request, HttpServletResponse response) {  
+    	 ServerProxy serverProxy = new ServerProxy();
+    	    String url = "http://api.sportsdatabase.com/nfl/query.json?sdql=%20team,%20o:team,%20line,points%20@week%20=%201%20and%20season%20=%202014%20and%20site%20=%20home&output=json";
+    	    Gson gson = new Gson();
+    	    
+   
+    	    try {
+    	    	BufferedReader br = serverProxy.sendGet(url); 			
+    	 	    //convert the json string back to object
+        		Matchup matchup = gson.fromJson(br, Matchup.class);
+        	    
+        		br.close();
+        			
+    			
+    			
+    		} catch (Exception e) {
+    			// TODO Auto-generated catch block
+    			e.printStackTrace();
+    		}
+    	    // serverProxy.
+        return "videos";
+    }
+    
+    @RequestMapping(value = "/schedule.htm")
+    public String displayLines(HttpServletRequest request, HttpServletResponse response) {   
+     ServerProxy serverProxy = new ServerProxy();
+    	    String url = "http://api.sportsdatabase.com/nfl/query.json?sdql=%20team,%20o:team,%20line,points%20@week%20=%201%20and%20season%20=%202014%20and%20site%20=%20home&output=json";
+    	   
+    	    
+    	    try {
+    	    	
+    	    	
+    	      // List<City> cities =  retrieveCitiesAndStates.retrieveAllCities();
+    	       
+    	       List<Matchup> matchups = retrieveLines.retrieveLinesByWeek((short) 16);
+    	       
+			if (matchups != null) {
+				Helpful.setObjInSession(request, "matchups", matchups);
+				// super.sendJsonToPage(response, request, cities);
+			} else {
+				super.sendMessageToPageAsJson(response, request, "error",
+						"No Matchups Displayed. Please Try Again.");
+			}
+    	                   
+    		} catch (Exception e) {
+    			// TODO Auto-generated catch block
+    			e.printStackTrace();
+    		}
+    	    // serverProxy.
+        return "schedule";
+    }
+    
     
     /**
      * stores an upload file to the file system
@@ -63,19 +141,26 @@ public class IndexController extends BaseController {
             Helpful.setObjInSession(request, VALIDATED_PATH_LIST, getValidatedPaths());
         }
        
-       List<City> cities =  retrieveCitiesAndStates.retrieveAllCities();
-       
-       
-       
-               if(cities != null){
-            Helpful.setObjInSession(request, "cities", cities);
-         //   super.sendJsonToPage(response, request, cities);
-        } else {
-            super.sendMessageToPageAsJson(response, request, "error", "No Cities Displayed. Please Try Again.");
-        }
+//       List<City> cities =  retrieveCitiesAndStates.retrieveAllCities();
+//       
+//       
+//       
+//               if(cities != null){
+//            Helpful.setObjInSession(request, "cities", cities);
+//         //   super.sendJsonToPage(response, request, cities);
+//        } else {
+//            super.sendMessageToPageAsJson(response, request, "error", "No Cities Displayed. Please Try Again.");
+//        }
         
         return "index";
     }
+    
+    
+    
+    
+   
+    
+    
     
     
     

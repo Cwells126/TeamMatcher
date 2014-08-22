@@ -5,7 +5,9 @@ import org.hibernate.cfg.Configuration;
 
 
 
+
 import com.connectcard.domain.City;
+import com.connectcard.domain.Matchup;
 
 public class HibernateUtil {
 
@@ -17,6 +19,7 @@ public class HibernateUtil {
 								.configure()
 								.addPackage("com.connectcard.domain") //the fully qualified package name
 								.addAnnotatedClass(City.class)
+								.addAnnotatedClass(Matchup.class)
 								.buildSessionFactory();
 
 		} catch (Throwable ex) {

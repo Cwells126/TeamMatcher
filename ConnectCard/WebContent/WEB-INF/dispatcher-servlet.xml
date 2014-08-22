@@ -16,29 +16,58 @@
 
     <tx:annotation-driven/>
     <mvc:annotation-driven/>
-    <context:component-scan base-package="com.connectcard.controller" />
+    <mvc:resources mapping="/css/**" location="/resources/css/" />
+    <mvc:resources mapping="/js/**" location="/resources/js/" />
+    <mvc:resources mapping="/images/**" location="/resources/images/" />
+<!--     <context:component-scan base-package="com.connectcard.controller" /> -->
     
     <!-- interceptor -->
-    <mvc:interceptors>
-      <bean class="com.connectcard.interceptor.SessionValidationInterceptor" />
-    </mvc:interceptors>
+<!--     <mvc:interceptors> -->
+<!--       <bean class="com.connectcard.interceptor.SessionValidationInterceptor" /> -->
+<!--     </mvc:interceptors> -->
     <!-- end interceptors -->
     <!--
     Most controllers will use the ControllerClassNameHandlerMapping above, but
     for the index controller we are using ParameterizableViewController, so we must
     define an explicit mapping for it.
     -->
-    <bean id="urlMapping" class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping">
+<!--     <bean id="urlMapping" class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping"> -->
+<!--         <property name="mappings"> -->
+<!--             <props> -->
+<!--                 <prop key="index.htm">indexController</prop> -->
+<!--             </props> -->
+<!--         </property> -->
+<!--     </bean> -->
+    
+    <bean id="videosController" class="com.connectcard.controller.VideosController"> </bean>
+	<bean id="indexController" class="com.connectcard.controller.IndexController"> </bean>
+	<bean id="scheduleController" class="com.connectcard.controller.ScheduleController"></bean>
+		
+    
+    <bean id="urlHandler" class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping">
+        <property name="urlMap">
+            <map>
+                <entry key="/videos" value-ref="videosController"/>
+                <entry key="/index" value-ref="indexController"/>
+                <entry key="/schedule" value-ref="scheduleController"/>
+            </map>
+        </property>
         <property name="mappings">
             <props>
-                <prop key="index.htm">indexController</prop>
+                <prop key="/videos.htm">videosController</prop>
+                <prop key="/index*">indexController</prop>
+                 <prop key="/schedule.htm">scheduleController</prop>
             </props>
         </property>
     </bean>
+    
 
     <bean id="viewResolver"
           class="org.springframework.web.servlet.view.InternalResourceViewResolver"
           p:prefix="/WEB-INF/jsp/"
           p:suffix=".jsp" />
+          
+          
+          
 
 </beans>
