@@ -14,7 +14,6 @@ import org.springframework.stereotype.Repository;
 @Repository
 public class BaseDAOImpl{
 
-    @Resource
     private DataSource dataSource;
     
     

@@ -130,57 +130,33 @@ public class ServerProxy {
 	String lineString = response.substring(lineIndex,endlineIndex);
 	ArrayList<Float> lineArr = intStringToArray(lineString);
 	
-	int scoreIndex = response.indexOf("[", endlineIndex);
-	int endScoreIndex = response.indexOf("]", scoreIndex);
+	int homeScoreIndex = response.indexOf("[", endlineIndex);
+	int endHomeScoreIndex = response.indexOf("]", homeScoreIndex);
 	
-	String scoreString = response.substring(scoreIndex,endScoreIndex);
+	String homeScoreString = response.substring(homeScoreIndex,endHomeScoreIndex);
 	
-	ArrayList<Float> homeArr = intStringToArray(scoreString);
+	ArrayList<Float> homeScoreArr = intStringToArray(homeScoreString);
+
 	
-	if( homeTeamArr.size() > 0 == awayTeamArr.size() > 0 == lineArr.size() > 0){
+	int awayScoreIndex = response.indexOf("[", endHomeScoreIndex);
+	int endAwayScoreIndex = response.indexOf("]", awayScoreIndex);
+	
+	String awayScoreString = response.substring(awayScoreIndex,endAwayScoreIndex);
+	
+	ArrayList<Float> awayScoreArr = intStringToArray(awayScoreString);
+	
+	if( homeTeamArr.size() > 0 && awayTeamArr.size() > 0 && lineArr.size() > 0){
 		
 		for (int i = 0; i < homeTeamArr.size(); i++) {
-			Matchup matchup = createMatchup(homeTeamArr.get(i), awayTeamArr.get(i), lineArr.get(i), homeArr, i); 
+			Matchup matchup = createMatchup(homeTeamArr.get(i), awayTeamArr.get(i), lineArr.get(i), homeScoreArr.get(i),awayScoreArr.get(i)); 
+			
 			matchups.add(matchup);
 		
 		}
-		
-		
-
-		
+				
 		
 	}
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
+
 	
 		
 		return matchups;
@@ -188,18 +164,21 @@ public class ServerProxy {
 
 	private Matchup createMatchup(String homeTeam,
 			String awayTeam, Float line,
-			ArrayList<Float> scoreArr, int i) { 
+			Float homeScore, Float awayScore) { 
 		
 		Matchup matchup = new Matchup();
 		
 		matchup.setAwayTeam(awayTeam);
 		matchup.setHomeTeam(homeTeam);
 		matchup.setLine(line);
-		if(scoreArr != null && scoreArr.size() > 0){
-			matchup.setHomeScore(scoreArr.get(i));
-			matchup.setAwayScore(scoreArr.get(i));
+	if(homeScore > 0){
+			matchup.setHomeScore(homeScore);
 		}
 		
+	if(awayScore > 0){
+		matchup.setAwayScore(awayScore);
+	}
+	
 		return matchup;
 	}
 

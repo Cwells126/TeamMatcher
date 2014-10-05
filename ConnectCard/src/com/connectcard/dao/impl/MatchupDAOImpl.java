@@ -87,7 +87,7 @@ public class MatchupDAOImpl implements MatchupDAO {
 		try {
 			transaction = session.beginTransaction();
 			matchups = session.createQuery("from Matchup m WHERE m.gameId < 16").list();
-
+			
 			for (Matchup matchup : matchups){
 				System.out.println("Displaying Game IDs " + matchup.getGameId());
 			}

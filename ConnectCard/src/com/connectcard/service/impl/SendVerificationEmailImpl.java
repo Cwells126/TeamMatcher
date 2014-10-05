@@ -2,11 +2,14 @@ package com.connectcard.service.impl;
 
 import com.connectcard.service.SendVerificationEmail;
 import com.jigy.api.Helpful;
+
 import javax.annotation.Resource;
 import javax.mail.MessagingException;
+
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
-@Service
+@Component
 public class SendVerificationEmailImpl implements SendVerificationEmail {
 
     @Resource

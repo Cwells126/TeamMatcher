@@ -14,7 +14,7 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public class StateDAOImpl extends BaseDAOImpl {
-    @Resource
+    
     private DataSource cityStateDataSource;
     
     

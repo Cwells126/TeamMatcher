@@ -8,7 +8,6 @@ import com.connectcard.domain.City;
 import com.connectcard.domain.Matchup;
 import com.connectcard.domain.State;
 
-@Component
 public interface RetrieveLines {
     /**
      * This method retrieves cities for the passed-in state

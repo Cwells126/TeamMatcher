@@ -1,11 +1,16 @@
 package com.connectcard.controller;
 
 import com.connectcard.domain.City;
+
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
+
 import com.connectcard.domain.Matchup;
 import com.connectcard.domain.User;
 import com.connectcard.service.LoginUser;
 import com.connectcard.service.RetrieveCitiesAndStates;
 import com.connectcard.service.RetrieveLines;
+import com.connectcard.service.impl.RetrieveLinesImpl;
 import com.connectcard.utility.ServerProxy;
 import com.jigy.api.Helpful;
 
@@ -53,24 +58,19 @@ public class IndexController extends BaseController {
     @Resource
     private LoginUser loginUser;
     
-    @Resource
-    private RetrieveCitiesAndStates retrieveCitiesAndStates;
-    
-    @Resource
-    private RetrieveLines retrieveLines;
-    
-    
     @Autowired
-    public void setRetrieveLines(RetrieveLines retrieveLines) {
-        this.retrieveLines = retrieveLines;
-    } 
+  private RetrieveLinesImpl retrieveLinesImpl;
     
     
     @RequestMapping(value = "/videos.htm")
     public String displayVideos(HttpServletRequest request, HttpServletResponse response) {  
     	 ServerProxy serverProxy = new ServerProxy();
-    	    String url = "http://api.sportsdatabase.com/nfl/query.json?sdql=%20team,%20o:team,%20line,points%20@week%20=%201%20and%20season%20=%202014%20and%20site%20=%20home&output=json";
-    	    Gson gson = new Gson();
+    	 short week = 1;
+    	 
+    	 while (week < 17){
+    		    
+    	     String url = "http://api.sportsdatabase.com/nfl/query.json?sdql=%20team,%20o:team,%20line,points%20,0:points%20@week%20=%20" + week + "%20and%20season%20=%202014%20and%20site%20=%20home&output=json" ;
+    	       Gson gson = new Gson();
     	    
    
     	    try {
@@ -79,30 +79,35 @@ public class IndexController extends BaseController {
         		Matchup matchup = gson.fromJson(br, Matchup.class);
         	    
         		br.close();
+        		
+        		week++;
         			
-    			
-    			
-    		} catch (Exception e) {
+    	    }
+    			 catch (Exception e) {
     			// TODO Auto-generated catch block
     			e.printStackTrace();
     		}
-    	    // serverProxy.
-        return "videos";
-    }
     
+    }
+         return "videos";
+    }
     @RequestMapping(value = "/schedule.htm")
     public String displayLines(HttpServletRequest request, HttpServletResponse response) {   
      ServerProxy serverProxy = new ServerProxy();
-    	    String url = "http://api.sportsdatabase.com/nfl/query.json?sdql=%20team,%20o:team,%20line,points%20@week%20=%201%20and%20season%20=%202014%20and%20site%20=%20home&output=json";
+     
+ 	    String url = "http://api.sportsdatabase.com/nfl/query.json?sdql=%20team,%20o:team,%20line,points%20@week%20=%201%20and%20season%20=%202014%20and%20site%20=%20home&output=json";
     	   
     	    
     	    try {
     	    	
+   
+    	    	RetrieveLinesImpl retrieveLinesImpl = new RetrieveLinesImpl();
     	    	
-    	      // List<City> cities =  retrieveCitiesAndStates.retrieveAllCities();
+    	    	
+    	    	List<Matchup> matchups =retrieveLinesImpl.retrieveLinesByWeek((short) 1);
+    	    	
     	       
-    	       List<Matchup> matchups = retrieveLines.retrieveLinesByWeek((short) 16);
-    	       
+    	    	 
 			if (matchups != null) {
 				Helpful.setObjInSession(request, "matchups", matchups);
 				// super.sendJsonToPage(response, request, cities);
